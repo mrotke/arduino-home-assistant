@@ -27,7 +27,7 @@ HANumeric HANumeric::fromStr(const uint8_t* buffer, const uint16_t length)
     uint8_t precision = 0;
 
     for (int i = 0; i < length; ++i) {
-        if (buffer[i] == ',' || buffer[i] == ',') {
+        if (buffer[i] == ',' || buffer[i] == '.') {
             if (decimalPointFound)
                 return HANumeric();
             else
@@ -48,7 +48,7 @@ HANumeric HANumeric::fromStr(const uint8_t* buffer, const uint16_t length)
     const uint8_t* ptr = &buffer[length - 1];
 
     while (ptr >= firstCh) {
-        if (*ptr != ',' && *ptr != ',')
+        if (*ptr != ',' && *ptr != '.')
         {
             uint8_t digit = *ptr - '0';
             if (digit > 9) {
