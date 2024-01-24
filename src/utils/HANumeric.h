@@ -12,6 +12,8 @@ class HANumeric
 public:
     /// The maximum number of digits that the base value can have (int64_t).
     static const uint8_t MaxDigitsNb;
+    /// The maximum precision
+    static const uint8_t maxPrecision;
 
     /**
      * Deserializes number from the given buffer.
@@ -229,7 +231,6 @@ private:
 
     explicit HANumeric(const int64_t value);
 
-    friend class HANumeric;
 };
 
 #endif

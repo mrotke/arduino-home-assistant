@@ -1,6 +1,7 @@
 #include "HANumeric.h"
 
 const uint8_t HANumeric::MaxDigitsNb = 19;
+const uint8_t HANumeric::maxPrecision = 3;
 
 HANumeric HANumeric::fromStr(const uint8_t* buffer, const uint16_t length)
 {
@@ -22,21 +23,48 @@ HANumeric HANumeric::fromStr(const uint8_t* buffer, const uint16_t length)
         return HANumeric();
     }
 
+    bool decimalPointFound = false;
+    uint8_t precision = 0;
+
+    for (int i = 0; i < length; ++i) {
+        if (buffer[i] == ',' || buffer[i] == ',') {
+            if (decimalPointFound)
+                return HANumeric();
+            else
+                decimalPointFound = true;
+        }else {
+            if (decimalPointFound)
+            {
+                precision++;
+                if (precision > maxPrecision)
+                    return HANumeric();
+            }
+        }
+
+    }
+
+
     uint64_t base = 1;
     const uint8_t* ptr = &buffer[length - 1];
 
     while (ptr >= firstCh) {
-        uint8_t digit = *ptr - '0';
-        if (digit > 9) {
-            return HANumeric();
-        }
+        if (*ptr != ',' && *ptr != ',')
+        {
+            uint8_t digit = *ptr - '0';
+            if (digit > 9) {
+                return HANumeric();
+            }
 
-        out += digit * base;
+            out += digit * base;
+            base *= 10;
+        }
         ptr--;
-        base *= 10;
     }
 
-    return HANumeric(isSigned ? out * -1 : out);
+    HANumeric ret(isSigned ? out * -1 : out);
+    ret.setPrecision(precision);
+
+    return ret;
 }
 
 HANumeric::HANumeric():
